@@ -1,5 +1,9 @@
 import { DirectorRequest, QualityCheck, Storyboard } from './DirectorContext';
 
+const LONG_VIDEO_TOLERANCE_MINUTES = 8;
+const STANDARD_VIDEO_TOLERANCE_MINUTES = 5;
+const MIN_SCENE_COUNT = 40;
+
 export class QualityController {
   runChecks(storyboard: Storyboard, request: DirectorRequest): QualityCheck[] {
     const checks: QualityCheck[] = [];
@@ -13,7 +17,8 @@ export class QualityController {
 
   private runtimeCheck(storyboard: Storyboard, targetMinutes: number): QualityCheck {
     const runtimeMinutes = storyboard.estimatedRuntimeSeconds / 60;
-    const tolerance = targetMinutes >= 60 ? 8 : 5;
+    const tolerance =
+      targetMinutes >= 60 ? LONG_VIDEO_TOLERANCE_MINUTES : STANDARD_VIDEO_TOLERANCE_MINUTES;
     const delta = Math.abs(runtimeMinutes - targetMinutes);
 
     return {
@@ -28,7 +33,7 @@ export class QualityController {
 
     return {
       check: 'scene-density',
-      passed: sceneCount >= 40,
+      passed: sceneCount >= MIN_SCENE_COUNT,
       details: `Storyboard generated ${sceneCount} scenes.`,
     };
   }

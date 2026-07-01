@@ -1,4 +1,4 @@
-export type TargetDuration = 20 | 30 | 45 | 60;
+export type TargetDuration = number;
 
 export type SceneAssetType = 'ai-image' | 'ai-video' | 'motion-graphics';
 

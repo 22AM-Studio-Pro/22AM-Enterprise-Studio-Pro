@@ -5,16 +5,21 @@ const MAX_CHAPTERS = 14;
 
 export class DirectorPlanner {
   generateOutline(request: DirectorRequest): ChapterOutline[] {
+    const normalizedTargetMinutes = this.normalizeTargetDuration(request.targetDurationMinutes);
     const chapterCount = this.resolveChapterCount(request);
-    const chapterDurationSeconds = Math.floor((request.targetDurationMinutes * 60) / chapterCount);
+    const totalDurationSeconds = normalizedTargetMinutes * 60;
+    const baseDuration = Math.floor(totalDurationSeconds / chapterCount);
+    let remainder = totalDurationSeconds % chapterCount;
 
     return Array.from({ length: chapterCount }, (_, index) => {
       const chapterNumber = index + 1;
+      const durationAdjustment = remainder > 0 ? 1 : 0;
+      remainder = Math.max(0, remainder - 1);
       return {
         id: `chapter-${chapterNumber}`,
         title: `Chapter ${chapterNumber}: ${request.topic}`,
         summary: this.buildChapterSummary(request, chapterNumber, chapterCount),
-        targetDurationSeconds: chapterDurationSeconds,
+        targetDurationSeconds: baseDuration + durationAdjustment,
       };
     });
   }
@@ -37,6 +42,10 @@ export class DirectorPlanner {
     }
 
     return 6;
+  }
+
+  private normalizeTargetDuration(targetDurationMinutes: number): number {
+    return Math.max(20, Math.floor(targetDurationMinutes));
   }
 
   private buildChapterSummary(request: DirectorRequest, chapterNumber: number, chapterCount: number): string {

@@ -1,5 +1,7 @@
 import { ScenePlan } from './DirectorContext';
 
+const TRANSITION_STING_FREQUENCY = 7;
+
 export class MusicPlanner {
   assignMusicCues(scenes: ScenePlan[]): ScenePlan[] {
     return scenes.map((scene, index) => ({
@@ -13,6 +15,6 @@ export class MusicPlanner {
       return 'intro-theme';
     }
 
-    return index % 7 === 0 ? 'transition-sting' : 'ambient-bed';
+    return index % TRANSITION_STING_FREQUENCY === 0 ? 'transition-sting' : 'ambient-bed';
   }
 }
