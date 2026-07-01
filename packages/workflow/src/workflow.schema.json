@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Workflow",
+  "type": "object",
+  "required": ["id", "name", "nodes"],
+  "properties": {
+    "id": { "type": "string" },
+    "version": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/node" }
+    }
+  },
+  "definitions": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["task","sequence","parallel","conditional","loop","delay","retry"] },
+        "name": { "type": "string" },
+        "task": { "type": "string" },
+        "input": { "type": "object" },
+        "nodes": { "type": "array", "items": { "$ref": "#/definitions/node" } },
+        "condition": { "type": "string" },
+        "then": { "$ref": "#/definitions/node" },
+        "otherwise": { "$ref": "#/definitions/node" },
+        "body": { "$ref": "#/definitions/node" },
+        "maxIterations": { "type": "integer" , "minimum": 1 },
+        "ms": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 1 },
+        "delayMs": { "type": "integer", "minimum": 0 },
+        "node": { "$ref": "#/definitions/node" }
+      }
+    }
+  }
+}
