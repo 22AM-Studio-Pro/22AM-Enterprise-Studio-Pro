@@ -1,7 +1,7 @@
-import { DependencyContainer } from './container/DependencyContainer'
-import { ConfigurationManager } from './config/ConfigurationManager'
-import { PlatformBootstrapper } from './container/PlatformBootstrapper'
-export { DependencyContainer, PlatformBootstrapper }
-export { ConfigurationManager }
+export { SettingsManager } from './settings/SettingsManager'
+export { DependencyContainer } from './container/DependencyContainer'
+export { ConfigurationManager } from './config/ConfigurationManager'
+export { SecretStore } from './secrets/SecretStore'
+export { PlatformBootstrapper } from './container/PlatformBootstrapper'
 export * from './container/types'
 export * from './config/types'
