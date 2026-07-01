@@ -1,0 +1,5 @@
+export { AssetManager } from './AssetManager'
+export { AssetRepository } from './AssetRepository'
+export { DuplicateDetector } from './DuplicateDetector'
+export { assetEvents } from './AssetEvents'
+export type { Asset, AssetType, AssetMetadataRecord } from './Asset'
