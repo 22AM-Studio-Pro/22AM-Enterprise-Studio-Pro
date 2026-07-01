@@ -14,9 +14,10 @@
     "dev": "tsc --watch",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit",
-    "test": "echo 'No tests yet'"
+    "test": "vitest run"
   },
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.1"
   }
 }
