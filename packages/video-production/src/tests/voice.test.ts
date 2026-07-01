@@ -3,11 +3,9 @@ import { VoiceManager } from '../voice/VoiceManager';
 import { EmotionController } from '../voice/EmotionController';
 import { SpeechPacing } from '../voice/SpeechPacing';
 import { VoiceStudio } from '../voice/VoiceStudio';
-import { VoiceCache } from '../voice/VoiceCache';
 import { VoiceTimeline } from '../voice/VoiceTimeline';
 import { VoiceNormalizer } from '../voice/VoiceNormalizer';
 import { PronunciationDictionary } from '../voice/PronunciationDictionary';
-import { SubtitleGenerator } from '../voice/SubtitleGenerator';
 
 describe('VoiceManager', () => {
   let manager: VoiceManager;
@@ -184,7 +182,9 @@ describe('VoiceNormalizer', () => {
     const norm = new VoiceNormalizer();
     const args = norm.buildFfmpegArgs('in.mp3', 'out.mp3');
     expect(args).toContain('-i');
-    expect(args).toContain('loudnorm');
+    const filterFlagIndex = args.indexOf('-af');
+    expect(filterFlagIndex).toBeGreaterThan(-1);
+    expect(args[filterFlagIndex + 1]).toContain('loudnorm=');
     expect(args[args.length - 1]).toBe('out.mp3');
   });
 });

@@ -33,7 +33,6 @@ export interface LanguagePipelineOutput {
 export class LanguagePipeline {
   constructor(
     private readonly translationManager: TranslationManager,
-    private readonly localizationManager: LocalizationManager,
     private readonly narrationLocalizer: NarrationLocalizer,
     private readonly subtitleLocalizer: SubtitleLocalizer,
     private readonly metadataLocalizer: MetadataLocalizer,
@@ -72,12 +71,10 @@ export class LanguagePipeline {
 
   static createDefault(): LanguagePipeline {
     const translator = new TranslationManager();
-    const localization = new LocalizationManager();
     return new LanguagePipeline(
       translator,
-      localization,
       new NarrationLocalizer(translator),
-      new SubtitleLocalizer(localization),
+      new SubtitleLocalizer(new LocalizationManager()),
       new MetadataLocalizer(translator),
       new SEOGenerator(),
     );

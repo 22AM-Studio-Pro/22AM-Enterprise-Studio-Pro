@@ -1,8 +1,8 @@
 import { TransitionEngine, SceneTransition } from './TransitionEngine';
 import { LowerThirdEngine, LowerThirdSpec } from './LowerThirdEngine';
 import { TextAnimator, AnimatedTextSpec } from './TextAnimator';
-import { InfographicEngine, ChartSpec, InfographicSpec } from './InfographicEngine';
-import { CalloutEngine, CalloutSpec } from './CalloutEngine';
+import { ChartSpec, InfographicSpec } from './InfographicEngine';
+import { CalloutSpec } from './CalloutEngine';
 import { ParticleEngine, ParticleSpec } from './ParticleEngine';
 import { BrandAnimator, LogoAnimationSpec, WatermarkSpec, ChapterCardSpec, BrandAsset } from './BrandAnimator';
 
@@ -35,8 +35,6 @@ export class MotionEngine {
     private readonly transitions: TransitionEngine,
     private readonly lowerThirds: LowerThirdEngine,
     private readonly text: TextAnimator,
-    private readonly infographics: InfographicEngine,
-    private readonly callouts: CalloutEngine,
     private readonly particles: ParticleEngine,
     private readonly brand: BrandAnimator,
   ) {}
@@ -78,8 +76,6 @@ export class MotionEngine {
       new TransitionEngine(),
       new LowerThirdEngine(),
       new TextAnimator(),
-      new InfographicEngine(),
-      new CalloutEngine(),
       new ParticleEngine(),
       new BrandAnimator(),
     );

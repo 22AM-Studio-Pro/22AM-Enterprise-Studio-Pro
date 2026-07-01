@@ -61,7 +61,7 @@ export class SpeechPacing {
     let pauseCount = 0;
 
     const processedParagraphs = paragraphs.map((paragraph, pIdx) => {
-      const sentences = paragraph.match(/[^.!?]+[.!?]+(\s|$)/g) ?? [paragraph];
+      const sentences = this.splitIntoSentences(paragraph);
 
       const processedSentences = sentences.map((sentence, sIdx) => {
         const trimmed = sentence.trim();
@@ -127,10 +127,98 @@ export class SpeechPacing {
 
   addEmphasisPauses(ssml: string, keywords: string[], durationMs = 200): string {
     let result = ssml;
-    for (const keyword of keywords) {
-      const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
-      result = result.replace(regex, `$1<break time="${durationMs}ms"/>`);
+    for (const rawKeyword of keywords) {
+      const keyword = rawKeyword.trim();
+      if (keyword.length === 0) {
+        continue;
+      }
+
+      result = this.insertPauseAfterKeyword(result, keyword, durationMs);
     }
     return result;
+  }
+
+  private insertPauseAfterKeyword(text: string, keyword: string, durationMs: number): string {
+    const lowerText = text.toLowerCase();
+    const lowerKeyword = keyword.toLowerCase();
+    const keywordLength = keyword.length;
+
+    let cursor = 0;
+    let output = '';
+
+    while (cursor < text.length) {
+      const matchIndex = lowerText.indexOf(lowerKeyword, cursor);
+
+      if (matchIndex === -1) {
+        output += text.slice(cursor);
+        break;
+      }
+
+      const matchEnd = matchIndex + keywordLength;
+      const charBefore = matchIndex > 0 ? text[matchIndex - 1] : '';
+      const charAfter = matchEnd < text.length ? text[matchEnd] : '';
+      const isWordBoundary =
+        (matchIndex === 0 || !this.isWordCharacter(charBefore)) &&
+        (matchEnd === text.length || !this.isWordCharacter(charAfter));
+
+      if (!isWordBoundary) {
+        output += text.slice(cursor, matchIndex + 1);
+        cursor = matchIndex + 1;
+        continue;
+      }
+
+      output += `${text.slice(cursor, matchEnd)}<break time="${durationMs}ms"/>`;
+      cursor = matchEnd;
+    }
+
+    return output;
+  }
+
+  private isWordCharacter(char: string): boolean {
+    if (char.length === 0) {
+      return false;
+    }
+
+    const code = char.charCodeAt(0);
+    return (
+      (code >= 48 && code <= 57) ||
+      (code >= 65 && code <= 90) ||
+      (code >= 97 && code <= 122) ||
+      code === 95
+    );
+  }
+
+  private splitIntoSentences(text: string): string[] {
+    const sentences: string[] = [];
+    let sentenceStart = 0;
+
+    for (let index = 0; index < text.length; index++) {
+      const char = text[index];
+      if (char !== '.' && char !== '!' && char !== '?') {
+        continue;
+      }
+
+      let sentenceEnd = index + 1;
+      while (sentenceEnd < text.length && this.isWhitespace(text[sentenceEnd])) {
+        sentenceEnd++;
+      }
+
+      const sentence = text.slice(sentenceStart, sentenceEnd).trim();
+      if (sentence.length > 0) {
+        sentences.push(sentence);
+      }
+      sentenceStart = sentenceEnd;
+    }
+
+    const trailingText = text.slice(sentenceStart).trim();
+    if (trailingText.length > 0) {
+      sentences.push(trailingText);
+    }
+
+    return sentences.length > 0 ? sentences : [text];
+  }
+
+  private isWhitespace(char: string): boolean {
+    return char === ' ' || char === '\n' || char === '\r' || char === '\t';
   }
 }

@@ -142,7 +142,9 @@ export class GoogleTTSProvider implements IVoiceProvider {
     return buildMockBuffer(text, options.speakingRate ?? 140);
   }
 
-  async *synthesizeStream(_text: string, _options: VoiceSynthesisOptions): AsyncIterable<StreamChunk> {
+  async *synthesizeStream(text: string, options: VoiceSynthesisOptions): AsyncIterable<StreamChunk> {
+    void text;
+    void options;
     yield* emptyStream();
   }
 
@@ -169,7 +171,9 @@ export class MurfProvider implements IVoiceProvider {
     return buildMockBuffer(text, options.speakingRate ?? 135);
   }
 
-  async *synthesizeStream(_text: string, _options: VoiceSynthesisOptions): AsyncIterable<StreamChunk> {
+  async *synthesizeStream(text: string, options: VoiceSynthesisOptions): AsyncIterable<StreamChunk> {
+    void text;
+    void options;
     yield* emptyStream();
   }
 

@@ -5,7 +5,6 @@ import { AudioDucking, VolumeEnvelope } from './AudioDucking';
 import { FadeController } from './FadeController';
 import { MusicMixer, MixTrackInput } from './MusicMixer';
 import { MusicCache } from './MusicCache';
-import { SoundEffects } from './SoundEffects';
 
 export interface MusicEngineInput {
   chapters: { id: string; mood?: string }[];
@@ -27,14 +26,12 @@ const CHAPTER_VOLUME_DB = -10;
 
 export class MusicEngine {
   constructor(
-    private readonly library: MusicLibrary,
     private readonly selector: MusicSelector,
     private readonly timeline: MusicTimeline,
     private readonly ducking: AudioDucking,
     private readonly fader: FadeController,
     private readonly mixer: MusicMixer,
     private readonly cache: MusicCache,
-    private readonly sfx: SoundEffects,
   ) {}
 
   compose(input: MusicEngineInput): MusicEngineOutput {
@@ -78,22 +75,18 @@ export class MusicEngine {
     const timelineResult = this.timeline.buildResult(input.totalDurationSeconds);
     const mixCommand = this.mixer.buildMixCommand(mixInputs, 'output/music-mix.mp3', input.totalDurationSeconds);
 
-    void this.sfx;
-
     return { timeline: timelineResult, duckingEnvelopes, mixCommand };
   }
 
   static createDefault(): MusicEngine {
     const library = new MusicLibrary();
     return new MusicEngine(
-      library,
       new MusicSelector(library),
       new MusicTimeline(),
       new AudioDucking(),
       new FadeController(),
       new MusicMixer(),
       new MusicCache(),
-      new SoundEffects(),
     );
   }
 }
