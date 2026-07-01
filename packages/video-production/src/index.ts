@@ -19,6 +19,55 @@ export { ResearchEngine } from './ResearchEngine';
 export { SceneGenerator } from './SceneGenerator';
 export { TimelineBuilder } from './TimelineBuilder';
 export { RenderFarm, FFmpegOrchestrator } from './RenderFarm';
+export {
+  VoiceStudio,
+  VoiceDirector,
+  NarrationRenderer,
+  NarratorRegistry,
+  PronunciationDictionary,
+  SsmlBuilder,
+} from './VoiceStudio';
+export {
+  MusicEngine,
+  MusicLibrary,
+  MusicScheduler,
+  VolumeDucker,
+} from './MusicEngine';
+export {
+  MotionGraphics,
+  MotionGraphicsComposer,
+  LowerThirdGenerator,
+  TitleCardGenerator,
+  ChapterTransitionGenerator,
+  AnimatedChartGenerator,
+  CalloutGenerator,
+  LogoAnimationGenerator,
+  InfographicGenerator,
+} from './MotionGraphics';
+export {
+  VideoOptimizer,
+  AssetCache,
+  SceneCache,
+  MemoryOptimizer,
+  CrashRecoveryManager,
+  IncrementalRenderer,
+} from './VideoOptimizer';
+export {
+  MultiLanguageFactory,
+  ScriptTranslator,
+  SubtitleLocalizer,
+  GraphicsLocalizer,
+  MetadataLocalizer,
+  SeoLocalizer,
+} from './MultiLanguageFactory';
+export {
+  ChannelFactory,
+  TopicQueue,
+  ThumbnailPlanner,
+  PublishScheduler,
+  DirectorRequestFactory,
+  PublishJobFactory,
+} from './ChannelFactory';
 export type {
   CameraMovement,
   ChapterOutline,
@@ -55,3 +104,57 @@ export type {
   RenderJob,
   RenderProgress,
 } from './RenderFarm';
+export type {
+  TTSEmotion,
+  TTSPacing,
+  NarratorProfile,
+  PronunciationEntry,
+  VoiceDirective,
+  RenderedNarration,
+} from './VoiceStudio';
+export type {
+  MusicMood,
+  MusicSource,
+  MusicTrackSpec,
+  MusicCuePoint,
+  MusicSchedule,
+  VolumeEnvelope,
+} from './MusicEngine';
+export type {
+  MotionGraphicType,
+  MotionGraphicElement,
+  LowerThird,
+  TitleCard,
+  ChapterTransition,
+  AnimatedChartSpec,
+  CalloutSpec,
+  LogoAnimationSpec,
+} from './MotionGraphics';
+export type {
+  AssetCacheEntry,
+  SceneCacheEntry,
+  MemoryBudget,
+  EncodingProfile,
+  OptimizedRenderPlan,
+  CrashRecoveryState,
+} from './VideoOptimizer';
+export type {
+  SupportedLanguage,
+  LanguageLocale,
+  LocalizedScript,
+  LocalizedSubtitles,
+  LocalizedGraphics,
+  LocalizedMetadata,
+  LocalizedSeo,
+  LocalizedVideoPackage,
+  MultiLanguageFactoryOutput,
+} from './MultiLanguageFactory';
+export type {
+  PublishPlatform,
+  PublishFrequency,
+  ChannelNiche,
+  ChannelConfig,
+  VideoPublishJob,
+  PublishSchedule,
+  ChannelProductionPlan,
+} from './ChannelFactory';
