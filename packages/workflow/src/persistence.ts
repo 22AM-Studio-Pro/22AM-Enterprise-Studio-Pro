@@ -70,7 +70,7 @@ export class Persistence {
 
   // executions
   createExecution(e: WorkflowExecution) {
-    const stmt = this.db.prepare('INSERT INTO executions (id, workflow_id, status, created_at, updated_at, checkpoint) VALUES (?, ?, ?, ?, ?, ?)')
+    const stmt = this.db.prepare('INSERT INTO executions (id, workflow_id, status, created_at, updated_at, checkpoint, locked) VALUES (?, ?, ?, ?, ?, ?, 0)')
     stmt.run(e.id, e.workflowId, e.status, e.createdAt, e.updatedAt ?? null, null)
   }
 
@@ -88,6 +88,20 @@ export class Persistence {
   listExecutions(limit = 50): WorkflowExecution[] {
     const rows = this.db.prepare('SELECT id, workflow_id as workflowId, status, created_at as createdAt, updated_at as updatedAt FROM executions ORDER BY created_at DESC LIMIT ?').all(limit)
     return rows as WorkflowExecution[]
+  }
+
+  // find incomplete executions (running or queued)
+  findIncompleteExecutions(): WorkflowExecution[] {
+    const rows = this.db.prepare("SELECT id, workflow_id as workflowId, status, created_at as createdAt, updated_at as updatedAt FROM executions WHERE status IN ('running','queued')").all()
+    return rows as WorkflowExecution[]
+  }
+
+  markExecutionFailedWithReason(id: string, reason: string) {
+    const stmt = this.db.prepare('UPDATE executions SET status = ?, updated_at = ? WHERE id = ?')
+    stmt.run('failed', new Date().toISOString(), id)
+    // store a metric about failure
+    const mstmt = this.db.prepare('INSERT INTO metrics (execution_id, name, value, created_at) VALUES (?, ?, ?, ?)')
+    mstmt.run(id, 'failure_reason', reason, new Date().toISOString())
   }
 
   // node records

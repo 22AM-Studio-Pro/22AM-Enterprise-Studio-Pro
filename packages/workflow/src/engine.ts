@@ -26,6 +26,23 @@ export class WorkflowEngine extends EventEmitter {
     this.queue = []
     this.runningCount = 0
     this.maxConcurrent = opts?.maxConcurrent ?? 2
+
+    // Attempt basic crash recovery on startup: mark incomplete executions as failed and emit events
+    // This is a conservative recovery strategy that avoids duplicating running work.
+    this.recoverOnStartup().catch((e) => {
+      // eslint-disable-next-line no-console
+      console.error('recovery failed', e)
+    })
+  }
+
+  private async recoverOnStartup() {
+    const incompletes = this.persistence.findIncompleteExecutions()
+    for (const ex of incompletes) {
+      // if there is a snapshot we could attempt resume; for now, mark as failed with reason 'crash_recovery'
+      const snap = this.persistence.getLastSnapshot(ex.id)
+      this.persistence.markExecutionFailedWithReason(ex.id, 'crash_recovery')
+      this.emit('workflow.failed', { executionId: ex.id, reason: 'crash_recovery', snapshotAvailable: !!snap })
+    }
   }
 
   registerTask(name: string, handler: TaskHandler) {
