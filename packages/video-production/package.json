@@ -1,0 +1,19 @@
+{
+  "name": "@22am/video-production",
+  "version": "1.0.0",
+  "description": "AI-powered video production engine for automated storyboard generation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "nanoid": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^0.34.0"
+  }
+}
