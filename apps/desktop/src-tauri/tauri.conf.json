@@ -1,0 +1,12 @@
+{
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "pnpm dev",
+    "devPath": "http://localhost:5173",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "22AM Enterprise Studio Pro",
+    "version": "0.1.0"
+  }
+}

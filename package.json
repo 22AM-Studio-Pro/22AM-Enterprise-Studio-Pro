@@ -1,26 +1,16 @@
 {
   "name": "22am-enterprise-studio-pro",
-  "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "turbo run dev --parallel",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "format": "turbo run format",
-    "test": "turbo run test",
-    "type-check": "turbo run type-check"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.0",
-    "@typescript-eslint/eslint-plugin": "^7.14.0",
-    "@typescript-eslint/parser": "^7.14.0",
-    "eslint": "^9.8.0",
-    "prettier": "^3.3.3",
-    "turbo": "^2.0.0",
-    "typescript": "^5.5.4"
-  },
-  "engines": {
-    "node": ">=18"
+    "dev": "pnpm --filter @22am/desktop run dev",
+    "tauri": "pnpm --filter @22am/desktop run tauri",
+    "build": "pnpm --filter @22am/desktop run build",
+    "lint": "pnpm --filter @22am/desktop run lint",
+    "test": "pnpm --filter @22am/desktop run test"
   }
 }

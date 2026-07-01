@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useUnknownInCatchVariables": false,
+    "lib": ["DOM", "ES2022"],
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "@desktop/*": ["src/*"],
+      "@shared/*": ["../packages/shared/*"]
+    }
+  },
+  "include": ["src"]
+}
