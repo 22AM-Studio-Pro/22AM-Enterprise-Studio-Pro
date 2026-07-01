@@ -4,9 +4,10 @@ export class SceneScheduler {
   scheduleScenes(scenes: ScenePlan[]): ScenePlan[] {
     let cursor = 0;
 
-    return scenes.map((scene) => {
+    return scenes.map((scene, index) => {
       const scheduledScene: ScenePlan = {
         ...scene,
+        sequenceNumber: index + 1,
         startTimeSeconds: cursor,
       };
 

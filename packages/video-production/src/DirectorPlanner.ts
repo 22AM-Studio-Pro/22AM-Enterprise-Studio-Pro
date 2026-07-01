@@ -2,6 +2,13 @@ import { ChapterOutline, DirectorRequest } from './DirectorContext';
 
 const MIN_CHAPTERS = 6;
 const MAX_CHAPTERS = 14;
+const FEATURE_LENGTH_MINUTES = 60;
+const LONG_VIDEO_MINUTES = 45;
+const STANDARD_VIDEO_MINUTES = 30;
+const FEATURE_LENGTH_CHAPTERS = 14;
+const LONG_VIDEO_CHAPTERS = 10;
+const STANDARD_VIDEO_CHAPTERS = 8;
+const SHORT_VIDEO_CHAPTERS = 6;
 
 export class DirectorPlanner {
   generateOutline(request: DirectorRequest): ChapterOutline[] {
@@ -20,6 +27,7 @@ export class DirectorPlanner {
         title: `Chapter ${chapterNumber}: ${request.topic}`,
         summary: this.buildChapterSummary(request, chapterNumber, chapterCount),
         targetDurationSeconds: baseDuration + durationAdjustment,
+        chapterNumber,
       };
     });
   }
@@ -29,19 +37,19 @@ export class DirectorPlanner {
       return Math.max(MIN_CHAPTERS, Math.min(MAX_CHAPTERS, request.chapterCount));
     }
 
-    if (request.targetDurationMinutes >= 60) {
-      return 14;
+    if (request.targetDurationMinutes >= FEATURE_LENGTH_MINUTES) {
+      return FEATURE_LENGTH_CHAPTERS;
     }
 
-    if (request.targetDurationMinutes >= 45) {
-      return 10;
+    if (request.targetDurationMinutes >= LONG_VIDEO_MINUTES) {
+      return LONG_VIDEO_CHAPTERS;
     }
 
-    if (request.targetDurationMinutes >= 30) {
-      return 8;
+    if (request.targetDurationMinutes >= STANDARD_VIDEO_MINUTES) {
+      return STANDARD_VIDEO_CHAPTERS;
     }
 
-    return 6;
+    return SHORT_VIDEO_CHAPTERS;
   }
 
   private normalizeTargetDuration(targetDurationMinutes: number): number {

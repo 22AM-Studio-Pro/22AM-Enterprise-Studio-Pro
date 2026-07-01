@@ -1,18 +1,21 @@
 import { DirectorRequest, ScenePlan } from './DirectorContext';
 
-const WORDS_PER_SECOND = 2.3;
+const READABLE_NARRATION_WORDS_PER_SECOND = 2.3;
 const MIN_NARRATION_WORDS = 8;
 
 export class NarrationPlanner {
   optimizeNarration(scenes: ScenePlan[], request: DirectorRequest): ScenePlan[] {
     return scenes.map((scene) => {
-      const targetWordCount = Math.max(MIN_NARRATION_WORDS, Math.floor(scene.durationSeconds * WORDS_PER_SECOND));
+      const targetWordCount = Math.max(
+        MIN_NARRATION_WORDS,
+        Math.floor(scene.durationSeconds * READABLE_NARRATION_WORDS_PER_SECOND),
+      );
       const narration = this.fitNarration(scene.narration, targetWordCount, request.tone);
 
       return {
         ...scene,
         narration,
-        subtitleText: narration,
+        subtitles: [narration],
       };
     });
   }

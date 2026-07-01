@@ -35,21 +35,25 @@ export interface ChapterOutline {
   title: string;
   summary: string;
   targetDurationSeconds: number;
+  chapterNumber?: number;
 }
 
 export interface ScenePlan {
   id: string;
   chapterId: string;
+  chapterNumber: number;
+  sceneNumber: number;
+  sequenceNumber: number;
   title: string;
   narration: string;
   durationSeconds: number;
   assetType: SceneAssetType;
   cameraMovement: CameraMovement;
-  imagePrompt: string;
-  videoPrompt: string;
+  imagePrompts: string[];
+  videoPrompts: string[];
   transition: string;
   musicCue: string;
-  subtitleText: string;
+  subtitles: string[];
   effects: string[];
   startTimeSeconds?: number;
 }

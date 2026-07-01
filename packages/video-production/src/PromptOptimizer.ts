@@ -4,8 +4,8 @@ export class PromptOptimizer {
   optimizeScenes(scenes: ScenePlan[]): ScenePlan[] {
     return scenes.map((scene) => ({
       ...scene,
-      imagePrompt: this.enhancePrompt(scene.imagePrompt),
-      videoPrompt: this.enhancePrompt(scene.videoPrompt),
+      imagePrompts: scene.imagePrompts.map((prompt) => this.enhancePrompt(prompt)),
+      videoPrompts: scene.videoPrompts.map((prompt) => this.enhancePrompt(prompt)),
     }));
   }
 

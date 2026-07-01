@@ -9,6 +9,16 @@ export { PromptOptimizer } from './PromptOptimizer';
 export { NarrationPlanner } from './NarrationPlanner';
 export { MusicPlanner } from './MusicPlanner';
 export { QualityController } from './QualityController';
+export { TopicPlanner } from './TopicPlanner';
+export { ResearchManager } from './ResearchManager';
+export { CitationManager } from './CitationManager';
+export { FactValidator } from './FactValidator';
+export { OutlineGenerator } from './OutlineGenerator';
+export { ChapterGenerator } from './ChapterGenerator';
+export { ResearchEngine } from './ResearchEngine';
+export { SceneGenerator } from './SceneGenerator';
+export { TimelineBuilder } from './TimelineBuilder';
+export { RenderFarm, FFmpegOrchestrator } from './RenderFarm';
 export type {
   CameraMovement,
   ChapterOutline,
@@ -22,3 +32,26 @@ export type {
   TargetDuration,
   VisualStyle,
 } from './DirectorContext';
+export type {
+  Citation,
+  OutlineSection,
+  ResearchFact,
+  ResearchResult,
+  ResearchSource,
+  TopicResearchPlan,
+  ValidatedFact,
+} from './ResearchEngine';
+export type { SceneComposition } from './SceneGenerator';
+export type {
+  MasterTimeline,
+  RenderQueueItem,
+  TimelineClip,
+  TimelineTrack,
+  TrackType,
+} from './TimelineBuilder';
+export type {
+  RenderCommand,
+  RenderCheckpoint,
+  RenderJob,
+  RenderProgress,
+} from './RenderFarm';
