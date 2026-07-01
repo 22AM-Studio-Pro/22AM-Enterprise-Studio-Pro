@@ -47,3 +47,17 @@ export interface ScheduledJob {
   enabled: boolean;
   nextRun?: number;
 }
+
+export interface PersistentJobData {
+  id: string;
+  type: JobType;
+  status: JobStatus;
+  priority: number;
+  payload: JobPayload;
+  progress: number;
+  error: string | null;
+  retryCount: number;
+  createdAt: number;
+  startedAt: number | null;
+  completedAt: number | null;
+}

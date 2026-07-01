@@ -19,7 +19,8 @@
   "dependencies": {
     "@22am-enterprise/database": "workspace:*",
     "@22am-enterprise/shared": "workspace:*",
-    "cron": "^3.1.7"
+    "cron": "^3.1.7",
+    "events": "^3.3.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

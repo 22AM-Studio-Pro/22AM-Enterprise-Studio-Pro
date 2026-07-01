@@ -1,8 +1,9 @@
-export type { EngineConfig, JobType, JobStatus, LogLevel, LogEntry } from './types';
+export type { EngineConfig, JobType, JobStatus, LogLevel, LogEntry, PersistentJobData } from './types';
 export { Engine } from './Engine';
 export { EventBus } from './EventBus';
-export { Logger } from './Logger';
-export { JobQueue } from './JobQueue';
+export { LoggerService } from './LoggerService';
+export { AsyncLogger } from './AsyncLogger';
+export { PersistentJobQueue } from './PersistentJobQueue';
 export { Job } from './Job';
 export { Worker, type JobHandler, type WorkerConfig } from './Worker';
-export { Scheduler } from './Scheduler';
+export { PersistentScheduler } from './PersistentScheduler';

@@ -1,32 +1,33 @@
 import type { EngineConfig, LogLevel, JobType, JobPayload } from './types';
 import { EventBus } from './EventBus';
-import { Logger } from './Logger';
-import { JobQueue } from './JobQueue';
+import { LoggerService } from './LoggerService';
+import { PersistentJobQueue } from './PersistentJobQueue';
 import { Worker, type JobHandler } from './Worker';
-import { Scheduler } from './Scheduler';
+import { PersistentScheduler } from './PersistentScheduler';
 import type { DatabaseManager } from '@22am-enterprise/database';
 
 export class Engine {
   private config: EngineConfig;
   private eventBus: EventBus;
-  private logger: Logger;
-  private queue: JobQueue;
+  private logger: LoggerService;
+  private queue: PersistentJobQueue;
   private workers: Worker[] = [];
-  private scheduler: Scheduler;
-  private db: DatabaseManager | null = null;
+  private scheduler: PersistentScheduler;
+  private db: DatabaseManager;
   private running: boolean = false;
   private processingInterval: NodeJS.Timer | null = null;
 
-  constructor(config: EngineConfig, db?: DatabaseManager) {
+  constructor(config: EngineConfig, db: DatabaseManager) {
     this.config = config;
+    this.db = db;
     this.eventBus = new EventBus();
-    this.logger = new Logger(config.logLevel);
-    this.queue = new JobQueue(db);
-    this.scheduler = new Scheduler({
+    this.logger = new LoggerService(config.logLevel);
+    this.queue = new PersistentJobQueue(db);
+    this.scheduler = new PersistentScheduler({
       logger: this.logger,
       queue: this.queue,
+      db: this.db,
     });
-    this.db = db || null;
 
     this.initializeWorkers();
   }
@@ -51,12 +52,12 @@ export class Engine {
     this.logger.info(`Job handler registered for type: ${jobType}`);
   }
 
-  enqueueJob(
+  async enqueueJob(
     type: JobType,
     payload: JobPayload,
     priority: number = 0
-  ): string {
-    const job = this.queue.enqueue(type, payload, priority);
+  ): Promise<string> {
+    const job = await this.queue.enqueue(type, payload, priority);
     this.eventBus.emit('job.created', { jobId: job.id, type });
     this.logger.info(`Job enqueued: ${job.id}`, { type, priority });
     return job.id;
@@ -69,12 +70,15 @@ export class Engine {
     }
 
     this.running = true;
+    await this.queue.loadPersistentJobs();
+    await this.scheduler.loadPersistentSchedules();
     this.scheduler.startAll();
     this.logger.info('Engine started');
 
-    // Start job processing loop
     this.processingInterval = setInterval(() => {
-      this.processJobs();
+      this.processJobs().catch((error) => {
+        this.logger.error('Error processing jobs', error);
+      });
     }, 1000);
   }
 
@@ -91,9 +95,8 @@ export class Engine {
       clearInterval(this.processingInterval);
     }
 
-    // Wait for any running jobs to complete
     await new Promise((resolve) => setTimeout(resolve, 2000));
-
+    await this.logger.shutdown();
     this.logger.info('Engine shutdown complete');
   }
 
@@ -104,7 +107,7 @@ export class Engine {
         break;
       }
 
-      const job = this.queue.dequeue();
+      const job = await this.queue.dequeue();
       if (!job) {
         break;
       }
@@ -123,16 +126,14 @@ export class Engine {
           });
           this.logger.info(`Job completed: ${job.id}`);
         } catch (error) {
-          const errorMsg =
-            error instanceof Error ? error.message : String(error);
+          const errorMsg = error instanceof Error ? error.message : String(error);
           job.retryCount++;
 
           if (job.retryCount < this.config.retryCount) {
-            this.queue.enqueue(job.type, job.payload, job.priority);
-            this.logger.info(
-              `Job will be retried: ${job.id}`,
-              { attempt: job.retryCount }
-            );
+            await this.queue.enqueue(job.type, job.payload, job.priority);
+            this.logger.info(`Job will be retried: ${job.id}`, {
+              attempt: job.retryCount,
+            });
           } else {
             job.fail(errorMsg);
             this.eventBus.emit('job.failed', {
@@ -140,11 +141,9 @@ export class Engine {
               error: errorMsg,
               duration: job.getDuration(),
             });
-            this.logger.error(
-              `Job failed: ${job.id}`,
-              error,
-              { attempts: job.retryCount }
-            );
+            this.logger.error(`Job failed: ${job.id}`, error, {
+              attempts: job.retryCount,
+            });
           }
         }
       })();
@@ -161,8 +160,8 @@ export class Engine {
     this.logger.info('Job queue resumed');
   }
 
-  cancelJob(jobId: string): boolean {
-    const success = this.queue.remove(jobId);
+  async cancelJob(jobId: string): Promise<boolean> {
+    const success = await this.queue.remove(jobId);
     if (success) {
       this.logger.info(`Job cancelled: ${jobId}`);
     }
@@ -199,11 +198,11 @@ export class Engine {
     return this.eventBus;
   }
 
-  getLogger(): Logger {
+  getLogger(): LoggerService {
     return this.logger;
   }
 
-  getScheduler(): Scheduler {
+  getScheduler(): PersistentScheduler {
     return this.scheduler;
   }
 
