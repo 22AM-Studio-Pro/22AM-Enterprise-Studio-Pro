@@ -21,7 +21,8 @@
       "@engine/*": ["packages/engine/src/*"],
       "@plugins/*": ["packages/plugins/src/*"],
       "@workflow/*": ["packages/workflow/src/*"],
-      "@ai-providers/*": ["packages/ai-providers/src/*"]
+      "@ai-providers/*": ["packages/ai-providers/src/*"],
+      "@video-production/*": ["packages/video-production/src/*"]
     }
   }
 }
