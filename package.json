@@ -2,6 +2,7 @@
   "name": "22am-enterprise-studio-pro",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@11.5.2",
   "type": "module",
   "scripts": {
     "dev": "turbo run dev --parallel",

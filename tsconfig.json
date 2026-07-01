@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["packages/shared/src/*"],
+      "@shared/*": ["packages/shared/src/*"],
       "@ui/*": ["packages/ui/src/*"],
       "@database/*": ["packages/database/src/*"],
       "@engine/*": ["packages/engine/src/*"],

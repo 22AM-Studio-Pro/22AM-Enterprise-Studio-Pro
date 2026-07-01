@@ -3,7 +3,6 @@ import { Setting, SettingType } from '@22am-enterprise/shared';
 
 export class SettingsRepository {
   private db: DatabaseConnection;
-  private tableName = 'settings';
 
   constructor(db: DatabaseConnection) {
     this.db = db;
