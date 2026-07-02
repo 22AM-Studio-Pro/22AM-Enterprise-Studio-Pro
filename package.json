@@ -2,6 +2,7 @@
   "name": "22am-enterprise-studio-pro",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@11.5.2",
   "type": "module",
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -9,7 +10,8 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "test": "turbo run test",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "typecheck": "turbo run type-check"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

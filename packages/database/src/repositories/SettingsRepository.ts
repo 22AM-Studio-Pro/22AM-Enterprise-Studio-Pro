@@ -1,9 +1,8 @@
 import { DatabaseConnection } from '../Database';
-import { Setting, SettingType } from '@22am-enterprise/shared';
+import type { Setting, SettingType } from '../shared-types';
 
 export class SettingsRepository {
   private db: DatabaseConnection;
-  private tableName = 'settings';
 
   constructor(db: DatabaseConnection) {
     this.db = db;
