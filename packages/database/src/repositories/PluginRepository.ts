@@ -1,10 +1,10 @@
 import { DatabaseConnection } from '../Database';
 import { BaseRepository } from './BaseRepository';
-import {
+import type {
   Plugin,
   PluginCreateInput,
   PluginUpdateInput,
-} from '@22am-enterprise/shared';
+} from '../shared-types';
 
 export class PluginRepository extends BaseRepository {
   constructor(db: DatabaseConnection) {

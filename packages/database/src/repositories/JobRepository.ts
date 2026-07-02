@@ -1,11 +1,11 @@
 import { DatabaseConnection } from '../Database';
 import { BaseRepository } from './BaseRepository';
-import {
+import type {
   Job,
   JobCreateInput,
   JobUpdateInput,
   JobStatus,
-} from '@22am-enterprise/shared';
+} from '../shared-types';
 
 export class JobRepository extends BaseRepository {
   constructor(db: DatabaseConnection) {

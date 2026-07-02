@@ -1,6 +1,6 @@
 import { DatabaseConnection } from '../Database';
 import { BaseRepository } from './BaseRepository';
-import { Asset, AssetCreateInput, AssetUpdateInput } from '@22am-enterprise/shared';
+import type { Asset, AssetCreateInput, AssetUpdateInput } from '../shared-types';
 
 export class AssetRepository extends BaseRepository {
   constructor(db: DatabaseConnection) {

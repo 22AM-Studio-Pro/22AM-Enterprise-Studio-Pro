@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -15,15 +19,42 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["packages/shared/src/*"],
-      "@shared/*": ["packages/shared/src/*"],
-      "@ui/*": ["packages/ui/src/*"],
-      "@database/*": ["packages/database/src/*"],
-      "@engine/*": ["packages/engine/src/*"],
-      "@plugins/*": ["packages/plugins/src/*"],
-      "@workflow/*": ["packages/workflow/src/*"],
-      "@ai-providers/*": ["packages/ai-providers/src/*"],
-      "@video-production/*": ["packages/video-production/src/*"]
+      "@/*": [
+        "packages/shared/src/*"
+      ],
+      "@shared/*": [
+        "packages/shared/src/*"
+      ],
+      "@ui/*": [
+        "packages/ui/src/*"
+      ],
+      "@database/*": [
+        "packages/database/src/*"
+      ],
+      "@engine/*": [
+        "packages/engine/src/*"
+      ],
+      "@plugins/*": [
+        "packages/plugins/src/*"
+      ],
+      "@workflow/*": [
+        "packages/workflow/src/*"
+      ],
+      "@ai-providers/*": [
+        "packages/ai-providers/src/*"
+      ],
+      "@video-production/*": [
+        "packages/video-production/src/*"
+      ],
+      "@22am-enterprise/shared": [
+        "packages/shared/src/index.ts"
+      ],
+      "@22am-enterprise/database": [
+        "packages/database/src/index.ts"
+      ],
+      "@22am-enterprise/video-production": [
+        "packages/video-production/src/index.ts"
+      ]
     }
   }
 }

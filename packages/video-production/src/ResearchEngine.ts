@@ -1,4 +1,4 @@
-import { DirectorRequest } from './DirectorContext';
+import type { DirectorRequest } from './DirectorContext';
 import { TopicPlanner } from './TopicPlanner';
 import { ResearchManager } from './ResearchManager';
 import { CitationManager } from './CitationManager';
@@ -12,6 +12,14 @@ export interface TopicResearchPlan {
   audience: string;
   searchQueries: string[];
   requiredSourceTypes: string[];
+  targetDurationMinutes?: number;
+  seedDocuments?: ResearchDocument[];
+}
+
+export interface ResearchDocument {
+  id: string;
+  title: string;
+  summary: string;
 }
 
 export interface ResearchSource {
@@ -19,6 +27,13 @@ export interface ResearchSource {
   title: string;
   url: string;
   sourceType: string;
+  provider: string;
+  excerpt: string;
+  trustScore: number;
+  retrievedAt: number;
+  publishedAt?: string;
+  contentHash: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ResearchFact {
@@ -26,17 +41,21 @@ export interface ResearchFact {
   statement: string;
   sourceId: string;
   confidence: number;
+  tags: string[];
+  supportingSourceIds: string[];
 }
 
 export interface Citation {
   factId: string;
   sourceId: string;
   reference: string;
+  anchor: string;
 }
 
 export interface ValidatedFact extends ResearchFact {
   citation: Citation;
   verified: boolean;
+  confidenceLabel: 'high' | 'medium' | 'low';
 }
 
 export interface OutlineSection {
@@ -44,6 +63,9 @@ export interface OutlineSection {
   title: string;
   summary: string;
   factIds: string[];
+  kind: 'hook' | 'introduction' | 'chapter' | 'recap' | 'conclusion' | 'cta';
+  targetMinutes: number;
+  order: number;
 }
 
 export interface ResearchResult {
@@ -52,6 +74,10 @@ export interface ResearchResult {
   facts: ValidatedFact[];
   outline: OutlineSection[];
   chapterBlueprints: { title: string; summary: string }[];
+  citations: Citation[];
+  sourceBreakdown: Record<string, number>;
+  averageConfidence: number;
+  cacheHit: boolean;
 }
 
 export class ResearchEngine {
@@ -66,11 +92,24 @@ export class ResearchEngine {
 
   run(request: DirectorRequest): ResearchResult {
     const plan = this.topicPlanner.createPlan(request.topic, request.goal, request.audience);
+    plan.targetDurationMinutes = request.targetDurationMinutes;
     const researched = this.researchManager.collect(plan);
     const citations = this.citationManager.createCitations(researched.facts, researched.sources);
     const validatedFacts = this.factValidator.validate(researched.facts, citations);
-    const outline = this.outlineGenerator.generate(request.topic, validatedFacts, request.targetDurationMinutes);
+    const outline = this.outlineGenerator.generate(
+      request.topic,
+      validatedFacts,
+      request.targetDurationMinutes,
+    );
     const chapterBlueprints = this.chapterGenerator.generate(outline);
+    const sourceBreakdown = researched.sources.reduce<Record<string, number>>((accumulator, source) => {
+      accumulator[source.provider] = (accumulator[source.provider] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    const averageConfidence =
+      validatedFacts.length === 0
+        ? 0
+        : validatedFacts.reduce((total, fact) => total + fact.confidence, 0) / validatedFacts.length;
 
     return {
       plan,
@@ -78,6 +117,10 @@ export class ResearchEngine {
       facts: validatedFacts,
       outline,
       chapterBlueprints,
+      citations,
+      sourceBreakdown,
+      averageConfidence,
+      cacheHit: researched.cacheHit,
     };
   }
 

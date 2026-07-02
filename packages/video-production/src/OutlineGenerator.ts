@@ -1,56 +1,66 @@
-import { OutlineSection, ValidatedFact } from './ResearchEngine';
-
-const LONG_FORM_MINUTES = 60;
-const EXTENDED_FORM_MINUTES = 45;
-const STANDARD_FORM_MINUTES = 30;
-const LONG_FORM_SECTIONS = 12;
-const EXTENDED_FORM_SECTIONS = 10;
-const STANDARD_FORM_SECTIONS = 8;
-const COMPACT_FORM_SECTIONS = 6;
+import type { OutlineSection, ValidatedFact } from './ResearchEngine';
+import { ChapterPlanner } from './ChapterPlanner';
+import { SectionPlanner } from './SectionPlanner';
+import { NarrativePlanner } from './NarrativePlanner';
 
 export class OutlineGenerator {
+  constructor(
+    private readonly chapterPlanner = new ChapterPlanner(),
+    private readonly sectionPlanner = new SectionPlanner(),
+    private readonly narrativePlanner = new NarrativePlanner(),
+  ) {}
+
   generate(topic: string, facts: ValidatedFact[], targetDurationMinutes: number): OutlineSection[] {
-    const sectionCount = this.resolveSectionCount(targetDurationMinutes);
+    const chapterPlan = this.chapterPlanner.plan(targetDurationMinutes);
+    const chapterSections = this.sectionPlanner.createChapterSections(topic, facts, chapterPlan.chapterMinutes, 3);
 
-    if (facts.length === 0) {
-      return Array.from({ length: sectionCount }, (_, index) => ({
-        id: `outline-${index + 1}`,
-        title: `${topic} — Section ${index + 1}`,
-        summary: `Section ${index + 1} placeholder awaiting validated facts.`,
+    return [
+      {
+        id: 'outline-hook',
+        title: `Hook: ${topic}`,
+        summary: this.narrativePlanner.createHook(topic, facts),
+        factIds: facts.slice(0, 1).map((fact) => fact.id),
+        kind: 'hook',
+        targetMinutes: 1,
+        order: 1,
+      },
+      {
+        id: 'outline-introduction',
+        title: `Introduction: ${topic}`,
+        summary: this.narrativePlanner.createIntroduction(topic, facts),
+        factIds: facts.slice(0, 2).map((fact) => fact.id),
+        kind: 'introduction',
+        targetMinutes: 2,
+        order: 2,
+      },
+      ...chapterSections,
+      {
+        id: 'outline-recap',
+        title: `Recap: ${topic}`,
+        summary: this.narrativePlanner.createRecap(topic, facts),
+        factIds: facts.slice(-2).map((fact) => fact.id),
+        kind: 'recap',
+        targetMinutes: 1,
+        order: chapterSections.length + 3,
+      },
+      {
+        id: 'outline-conclusion',
+        title: `Conclusion: ${topic}`,
+        summary: this.narrativePlanner.createConclusion(topic),
+        factIds: facts.slice(-1).map((fact) => fact.id),
+        kind: 'conclusion',
+        targetMinutes: 1,
+        order: chapterSections.length + 4,
+      },
+      {
+        id: 'outline-cta',
+        title: `CTA: ${topic}`,
+        summary: this.narrativePlanner.createCallToAction(topic),
         factIds: [],
-      }));
-    }
-
-    const sectionSize = Math.max(1, Math.ceil(facts.length / sectionCount));
-
-    return Array.from({ length: sectionCount }, (_, index) => {
-      const start = index * sectionSize;
-      const sectionFacts = facts.slice(start, start + sectionSize);
-      const fallbackFact = facts[index % facts.length];
-      const selectedFacts = sectionFacts.length > 0 ? sectionFacts : fallbackFact ? [fallbackFact] : [];
-
-      return {
-        id: `outline-${index + 1}`,
-        title: `${topic} — Section ${index + 1}`,
-        summary: selectedFacts.map((fact) => fact.statement).join(' '),
-        factIds: selectedFacts.map((fact) => fact.id),
-      };
-    });
-  }
-
-  private resolveSectionCount(targetDurationMinutes: number): number {
-    if (targetDurationMinutes >= LONG_FORM_MINUTES) {
-      return LONG_FORM_SECTIONS;
-    }
-
-    if (targetDurationMinutes >= EXTENDED_FORM_MINUTES) {
-      return EXTENDED_FORM_SECTIONS;
-    }
-
-    if (targetDurationMinutes >= STANDARD_FORM_MINUTES) {
-      return STANDARD_FORM_SECTIONS;
-    }
-
-    return COMPACT_FORM_SECTIONS;
+        kind: 'cta',
+        targetMinutes: 1,
+        order: chapterSections.length + 5,
+      },
+    ];
   }
 }
